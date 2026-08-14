@@ -8450,29 +8450,30 @@
         },
         {
             "name": "tightenco/duster",
-            "version": "v3.2.0",
+            "version": "v3.4.6",
             "source": {
                 "type": "git",
                 "url": "https://github.com/tighten/duster.git",
-                "reference": "b311811719ed432613cd3e9ac14a5952fc7cb5c5"
+                "reference": "28c5a95ec7ec5998715a68bebacf9737c6c1d620"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/tighten/duster/zipball/b311811719ed432613cd3e9ac14a5952fc7cb5c5",
-                "reference": "b311811719ed432613cd3e9ac14a5952fc7cb5c5",
+                "url": "https://api.github.com/repos/tighten/duster/zipball/28c5a95ec7ec5998715a68bebacf9737c6c1d620",
+                "reference": "28c5a95ec7ec5998715a68bebacf9737c6c1d620",
                 "shasum": ""
             },
             "require": {
                 "php": "^8.2.0"
             },
             "require-dev": {
-                "friendsofphp/php-cs-fixer": "^3.73",
-                "laravel-zero/framework": "^11.36",
-                "laravel/pint": "^1.21",
-                "nunomaduro/termwind": "^2.0",
+                "friendsofphp/php-cs-fixer": "^3.95",
+                "laravel-zero/framework": "^12.1",
+                "laravel/agent-detector": "^2.0",
+                "laravel/pint": "^1.29",
+                "nunomaduro/termwind": "^2.4",
                 "spatie/invade": "^1.1",
-                "squizlabs/php_codesniffer": "^3.12",
-                "tightenco/tlint": "^9.5"
+                "squizlabs/php_codesniffer": "^4.0",
+                "tightenco/tlint": "^9.6"
             },
             "bin": [
                 "builds/duster"
@@ -8514,7 +8515,7 @@
                 "issues": "https://github.com/tighten/duster/issues",
                 "source": "https://github.com/tighten/duster"
             },
-            "time": "2025-03-21T20:21:10+00:00"
+            "time": "2026-07-16T15:45:44+00:00"
         }
     ],
     "aliases": [],
@@ -8526,5 +8527,5 @@
         "php": "^8.2"
     },
     "platform-dev": {},
-    "plugin-api-version": "2.6.0"
+    "plugin-api-version": "2.9.0"
 }
