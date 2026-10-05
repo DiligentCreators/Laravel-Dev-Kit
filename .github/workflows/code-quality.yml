@@ -1,70 +1,80 @@
 name: Code Quality Checks
 
 on:
-  push:
-    branches: [main]
-  pull_request:
+    push:
+        branches: [main]
+    pull_request:
+
+permissions:
+    contents: read
 
 jobs:
-  code_quality:
-    runs-on: ubuntu-latest
+    lint:
+        runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout Code
-        uses: actions/checkout@v7
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v7
 
-      - name: Set Up Node.js
-        uses: actions/setup-node@v7
-        with:
-          node-version: 20
-          cache: "npm"
+            - name: Set Up Node.js
+              uses: actions/setup-node@v7
+              with:
+                  node-version: 22
+                  cache: 'npm'
 
-      - name: Install Node.js Dependencies
-        run: npm install
+            - name: Install Node.js Dependencies
+              run: npm ci
 
-      - name: Set Up PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.4
-          tools: composer
-          coverage: none
+            - name: Set Up PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.5'
+                  tools: composer
+                  coverage: none
 
-      - name: Install Composer Dependencies
-        run: composer install --no-interaction --prefer-dist --optimize-autoloader
+            - name: Install Composer Dependencies
+              run: composer install --no-interaction --prefer-dist --optimize-autoloader
 
-      - name: Get Modified Files
-        id: changed_files
-        run: |
-          echo "FILES=$(git diff --name-only ${{ github.event.before }} ${{ github.event.after }} | xargs)" >> $GITHUB_ENV
+            - name: Check Prettier
+              run: npx prettier --check .
 
-      - name: Run Prettier (JS, Blade, etc.)
-        if: env.FILES != ''
-        run: npx prettier --write $FILES
+            - name: Lint PHP (Duster)
+              run: ./vendor/bin/duster lint
 
-      - name: Run Duster (includes Pint + more)
-        if: env.FILES != ''
-        run: |
-          ./vendor/bin/duster fix $FILES
-          ./vendor/bin/duster lint $FILES
+    tests:
+        runs-on: ubuntu-latest
 
-      - name: Auto Commit Fixes
-        if: env.FILES != ''
-        id: auto_commit
-        uses: stefanzweifel/git-auto-commit-action@v7
-        with:
-          commit_message: "Apply automated code quality fixes"
-          commit_user_name: "GitHub Action"
-          commit_user_email: "actions@github.com"
+        steps:
+            - name: Checkout Code
+              uses: actions/checkout@v7
 
-      - name: Add Auto-Fix Commit to .git-blame-ignore-revs
-        if: env.FILES != ''
-        run: echo "${{ steps.auto_commit.outputs.commit_hash }}" >> .git-blame-ignore-revs
-        continue-on-error: true
+            - name: Set Up Node.js
+              uses: actions/setup-node@v7
+              with:
+                  node-version: 22
+                  cache: 'npm'
 
-      - name: Commit .git-blame-ignore-revs Update
-        if: env.FILES != ''
-        uses: stefanzweifel/git-auto-commit-action@v7
-        with:
-          commit_message: "Update .git-blame-ignore-revs with formatting commit"
-          commit_user_name: "GitHub Action"
-          commit_user_email: "actions@github.com"
+            - name: Install Node.js Dependencies
+              run: npm ci
+
+            - name: Set Up PHP
+              uses: shivammathur/setup-php@v2
+              with:
+                  php-version: '8.5'
+                  extensions: mbstring, sqlite, pdo_sqlite, tokenizer, xml, ctype, json, bcmath
+                  tools: composer
+                  coverage: none
+
+            - name: Install Composer Dependencies
+              run: composer install --no-interaction --prefer-dist --optimize-autoloader
+
+            - name: Prepare Application
+              run: |
+                  cp .env.example .env
+                  php artisan key:generate --ansi
+
+            - name: Build Frontend Assets
+              run: npm run build
+
+            - name: Run Tests
+              run: php artisan test

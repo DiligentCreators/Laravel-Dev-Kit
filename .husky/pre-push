@@ -1,3 +1,2 @@
 #!/usr/bin/env sh
-
-./vendor/bin/duster
+php artisan test
