@@ -1,4 +1,2 @@
 #!/usr/bin/env sh
-
-./vendor/bin/duster
-
+npx lint-staged

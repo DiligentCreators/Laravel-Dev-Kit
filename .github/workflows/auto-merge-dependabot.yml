@@ -1,31 +1,21 @@
-name: Auto-Merge Dependabot PRs
+name: Auto-Approve Dependabot PRs
 
 on:
-  pull_request_target:
-    types:
-      - opened
-      - synchronize
+    pull_request_target:
+        types:
+            - opened
+            - synchronize
+
+permissions:
+    pull-requests: write
 
 jobs:
-  auto-approve-and-merge:
-    runs-on: ubuntu-latest
-    if: |
-      github.event.pull_request.user.login == 'dependabot[bot]' &&
-      github.event.pull_request.state == 'open'
+    auto-approve:
+        runs-on: ubuntu-latest
+        if: github.event.pull_request.user.login == 'dependabot[bot]'
 
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v7
-
-      - name: Auto-approve Dependabot PR
-        uses: hmarr/auto-approve-action@v4
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Auto-merge Dependabot PR
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          gh pr merge ${{ github.event.pull_request.number }} --squash --auto
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        steps:
+            - name: Auto-approve Dependabot PR
+              uses: hmarr/auto-approve-action@v4
+              with:
+                  github-token: ${{ secrets.GITHUB_TOKEN }}
